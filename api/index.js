@@ -62,7 +62,7 @@ app.post('/api/login', async (req, res) => {
 // --- User Items ---
 app.get('/api/items', async (req, res) => {
   try {
-    const { data, error } = await supabase.from('items').select('*, users(name)').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('items').select('*, users(name, email, mobile_number)').order('created_at', { ascending: false });
     if (error) return res.status(400).json({ error: error.message });
     res.json(data);
   } catch (error) {

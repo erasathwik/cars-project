@@ -279,7 +279,21 @@
       </div>
     </div>
 
-    <!-- ADMIN DASHBOARD -->
+    <!-- CONTACT FINDER MODAL -->
+    <div id="contact-modal" class="modal">
+      <div class="modal-content card">
+        <div class="modal-header">
+          <h3>Contact Finder</h3>
+          <button class="icon-btn" onclick="closeModal('contact-modal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-4">Reach out to <strong id="contact-finder-name"></strong> who found this item:</p>
+          <div id="contact-details" class="contact-details">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
     <section id="admin-dashboard-view" class="view">
       <div class="admin-layout">
         <aside class="admin-sidebar">

@@ -201,7 +201,12 @@ function renderItems() {
     return;
   }
 
-  container.innerHTML = filtered.map(item => `
+  container.innerHTML = filtered.map(item => {
+    const finderName = item.users?.name || 'Unknown';
+    const finderEmail = item.users?.email || '';
+    const finderPhone = item.users?.mobile_number || '';
+
+    return `
     <div class="card item-card">
       <div class="card-image-wrap">
         <img src="${item.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}" 
@@ -217,22 +222,35 @@ function renderItems() {
       <div class="card-meta">
         <i data-lucide="map-pin"></i> <span>Found at: ${item.location_found}</span>
       </div>
-      <div class="card-meta mb-4">
+      <div class="card-meta">
         <i data-lucide="clock"></i> <span>${new Date(item.created_at).toLocaleDateString()}</span>
       </div>
+
+      <!-- Finder Info -->
+      <div class="finder-info">
+        <div class="finder-label"><i data-lucide="user"></i> Found by: <strong>${finderName}</strong></div>
+        ${finderEmail ? `<div class="finder-detail"><i data-lucide="mail"></i> ${finderEmail}</div>` : ''}
+        ${finderPhone ? `<div class="finder-detail"><i data-lucide="phone"></i> ${finderPhone}</div>` : ''}
+      </div>
+
       <p class="card-desc">${item.description}</p>
       
-      ${item.status === 'found' ? `
-        <button class="btn btn-primary btn-block mt-4" onclick="initClaim('${item.id}')">
-          Claim this item
-        </button>
-      ` : `
-        <button class="btn btn-outline btn-block mt-4" disabled>
-           Already ${item.status}
-        </button>
-      `}
+      <div class="card-actions">
+        ${item.status === 'found' ? `
+          <button class="btn btn-primary btn-block" onclick="initClaim('${item.id}')">
+            <i data-lucide="hand"></i> Claim this item
+          </button>
+          <button class="btn btn-outline btn-block" onclick="showContactModal('${finderName}', '${finderEmail}', '${finderPhone}')">
+            <i data-lucide="message-circle"></i> Contact Finder
+          </button>
+        ` : `
+          <button class="btn btn-outline btn-block" disabled>
+             Already ${item.status}
+          </button>
+        `}
+      </div>
     </div>
-  `).join('');
+  `}).join('');
 
   lucide.createIcons();
 }
@@ -348,6 +366,40 @@ async function initClaim(itemId) {
   } catch (err) {
     container.innerHTML = `<p class="error-msg">Failed to load questions: ${err.message}</p>`;
   }
+}
+
+function showContactModal(name, email, phone) {
+  const modal = $('#contact-modal');
+  $('#contact-finder-name').textContent = name;
+
+  let contactHtml = '';
+  if (email) {
+    contactHtml += `
+      <a href="mailto:${email}" class="contact-link">
+        <i data-lucide="mail"></i>
+        <div>
+          <span class="contact-link-label">Email</span>
+          <span class="contact-link-value">${email}</span>
+        </div>
+      </a>`;
+  }
+  if (phone) {
+    contactHtml += `
+      <a href="tel:${phone}" class="contact-link">
+        <i data-lucide="phone"></i>
+        <div>
+          <span class="contact-link-label">Phone</span>
+          <span class="contact-link-value">${phone}</span>
+        </div>
+      </a>`;
+  }
+  if (!email && !phone) {
+    contactHtml = '<p class="text-gray">No contact details available for this finder.</p>';
+  }
+
+  $('#contact-details').innerHTML = contactHtml;
+  modal.classList.add('active');
+  lucide.createIcons();
 }
 
 function closeModal(id) {
