@@ -10,13 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/config', (req, res) => {
-  res.json({
-    supabaseUrl: process.env.VITE_SUPABASE_URL || '',
-    supabaseKey: process.env.VITE_SUPABASE_ANON_KEY || ''
-  });
-});
-
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || '';
 

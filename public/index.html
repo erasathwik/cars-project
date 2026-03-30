@@ -4,11 +4,331 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CARS - Campus Asset Recovery System</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-  <div id="appView"></div>
-  <script type="module" src="/app.js"></script>
+  
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="logo" onclick="navigate('home')">
+        <i data-lucide="package-search"></i>
+        <span>CARS</span>
+      </div>
+      <div class="nav-links" id="nav-links">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </nav>
+
+  <main id="app-content">
+    <!-- Views will be toggled here -->
+    
+    <!-- HOME VIEW -->
+    <section id="home-view" class="view active">
+      <div class="hero">
+        <div class="hero-content">
+          <h1>Campus Asset Recovery System</h1>
+          <p>Lost something on campus? Or found an item that belongs to someone else? CARS connects you to make returning lost items easy and secure.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="navigate('items')">Browse Items</button>
+            <button class="btn btn-outline" onclick="navigate('login')">Get Started</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTH VIEWS -->
+    <section id="login-view" class="view">
+      <div class="auth-container">
+        <div class="auth-card">
+          <h2>Welcome Back</h2>
+          <p>Sign in to your CARS account</p>
+          <form id="login-form">
+            <div class="form-group">
+              <label>Email Address</label>
+              <div class="input-wrapper">
+                <i data-lucide="mail"></i>
+                <input type="email" id="login-email" required placeholder="Enter your email">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <div class="input-wrapper">
+                <i data-lucide="lock"></i>
+                <input type="password" id="login-password" required placeholder="Enter your password">
+              </div>
+            </div>
+            <div id="login-error" class="error-msg"></div>
+            <button type="submit" class="btn btn-primary btn-block" id="login-btn">
+              <span>Sign In</span>
+            </button>
+          </form>
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="navigate('signup'); return false;">Sign up</a></p>
+          <p class="auth-switch"><a href="#" onclick="navigate('admin-login'); return false;">Admin Login</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="signup-view" class="view">
+      <div class="auth-container">
+        <div class="auth-card">
+          <h2>Create Account</h2>
+          <p>Join CARS to post and claim items</p>
+          <form id="signup-form">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="signup-name" required placeholder="John Doe">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Roll Number</label>
+                <input type="text" id="signup-roll" required placeholder="e.g. 21BCE0001">
+              </div>
+              <div class="form-group">
+                <label>Branch</label>
+                <input type="text" id="signup-branch" required placeholder="e.g. CSE">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Mobile Number</label>
+              <input type="tel" id="signup-mobile" required placeholder="10-digit number">
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="signup-email" required placeholder="campus email preferred">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="signup-password" required placeholder="Min 6 characters">
+            </div>
+            <div id="signup-error" class="error-msg"></div>
+            <button type="submit" class="btn btn-primary btn-block" id="signup-btn">
+              <span>Create Account</span>
+            </button>
+          </form>
+          <p class="auth-switch">Already have an account? <a href="#" onclick="navigate('login'); return false;">Sign in</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN LOGIN -->
+    <section id="admin-login-view" class="view">
+      <div class="auth-container">
+        <div class="auth-card admin-card">
+          <h2>Admin Portal</h2>
+          <p>Sign in to manage items and claims</p>
+          <form id="admin-login-form">
+            <div class="form-group">
+              <label>Admin Email</label>
+              <input type="email" id="admin-email" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="admin-password" required>
+            </div>
+            <div id="admin-login-error" class="error-msg"></div>
+            <button type="submit" class="btn btn-primary btn-block" id="admin-login-btn">
+              <span>Access Portal</span>
+            </button>
+          </form>
+          <p class="auth-switch"><a href="#" onclick="navigate('login'); return false;">Back to User Login</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALL ITEMS (For users/guests) -->
+    <section id="items-view" class="view">
+      <div class="page-header">
+        <div>
+          <h2>Lost & Found Items</h2>
+          <p>Browse recently found items on campus.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-post-item" onclick="navigate('post-item')">
+          <i data-lucide="plus"></i> Report Found Item
+        </button>
+      </div>
+      
+      <div class="filters">
+        <input type="text" id="search-items" placeholder="Search items..." class="search-input">
+        <select id="category-filter" class="select-input">
+          <option value="">All Categories</option>
+          <option value="electronics">Electronics</option>
+          <option value="documents">Documents</option>
+          <option value="accessories">Accessories</option>
+          <option value="clothing">Clothing</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+
+      <div class="items-grid" id="items-container">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- POST ITEM -->
+    <section id="post-item-view" class="view">
+      <div class="form-container">
+        <button class="btn btn-ghost mb-4" onclick="navigate('items')">
+          <i data-lucide="arrow-left"></i> Back to Items
+        </button>
+        <div class="card">
+          <h2>Report a Found Item</h2>
+          <form id="post-item-form">
+            <div class="form-group">
+              <label>Item Title</label>
+              <input type="text" id="item-title" required placeholder="e.g. Blue Water Bottle">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Category</label>
+                <select id="item-category" required>
+                  <option value="electronics">Electronics</option>
+                  <option value="documents">Documents/IDs</option>
+                  <option value="accessories">Accessories/Bags</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Location Found</label>
+                <input type="text" id="item-location" required placeholder="e.g. Library 2nd Floor">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Description (Hidden Details)</label>
+              <textarea id="item-desc" rows="3" required placeholder="Provide details. These will be used to verify the owner."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Image URL (Optional)</label>
+              <input type="url" id="item-image" placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <hr class="divider">
+            <h3>Security Questions</h3>
+            <p class="text-sm text-gray">Add questions that only the real owner can answer (e.g., "What is the lock screen wallpaper?").</p>
+            
+            <div id="questions-container">
+              <div class="question-row">
+                <input type="text" class="q-input" placeholder="Question 1" required>
+                <input type="text" class="a-input" placeholder="Expected Answer" required>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm mt-2" onclick="addQuestionField()">
+              <i data-lucide="plus"></i> Add Question
+            </button>
+
+            <div id="post-error" class="error-msg mt-4"></div>
+            <button type="submit" class="btn btn-primary mt-4 w-full" id="post-item-btn">
+              Submit Item
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY POSTS -->
+    <section id="my-posts-view" class="view">
+      <div class="page-header">
+        <div>
+          <h2>My Reports</h2>
+          <p>Items you have reported as found</p>
+        </div>
+      </div>
+      <div class="items-grid" id="my-posts-container">
+         <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- MY CLAIMS -->
+    <section id="my-claims-view" class="view">
+      <div class="page-header">
+        <div>
+          <h2>My Claims</h2>
+          <p>Track the status of your item claims</p>
+        </div>
+      </div>
+      <div id="my-claims-container" class="claims-list">
+         <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- CLAIM MODAL -->
+    <div id="claim-modal" class="modal">
+      <div class="modal-content card">
+        <div class="modal-header">
+          <h3>Claim Item</h3>
+          <button class="icon-btn" onclick="closeModal('claim-modal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-4">Answer the security questions to prove ownership.</p>
+          <form id="claim-form">
+            <input type="hidden" id="claim-item-id">
+            <div id="claim-questions-container">
+              <!-- Rendered via JS -->
+            </div>
+            <div id="claim-error" class="error-msg"></div>
+            <button type="submit" class="btn btn-primary w-full mt-4" id="claim-submit-btn">Submit Claim</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <section id="admin-dashboard-view" class="view">
+      <div class="admin-layout">
+        <aside class="admin-sidebar">
+          <h3>Admin Panel</h3>
+          <nav>
+            <a href="#" class="admin-nav-link active" onclick="switchAdminTab('items'); return false;" id="tab-admin-items">
+              <i data-lucide="package"></i> All Items
+            </a>
+            <a href="#" class="admin-nav-link" onclick="switchAdminTab('claims'); return false;" id="tab-admin-claims">
+              <i data-lucide="clipboard-check"></i> Manage Claims
+            </a>
+          </nav>
+        </aside>
+        <main class="admin-content">
+          <div id="admin-items-tab" class="admin-tab active">
+            <h2>Manage Items</h2>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Reported By</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-items-table">
+                  <!-- Rendered via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="admin-claims-tab" class="admin-tab">
+            <h2>Review Claims</h2>
+            <div class="claims-grid" id="admin-claims-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Notify Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="/app.js"></script>
 </body>
 </html>
